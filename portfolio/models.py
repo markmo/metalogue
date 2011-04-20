@@ -63,6 +63,13 @@ class ProgrammingLanguage(models.Model):
     def __unicode__(self):
         return str(self.name)
 
+class SchemaType(models.Model):
+
+    name = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return str(self.name)
+
 class StakeholderGroup(models.Model):
 
     name = models.CharField(max_length=200)
@@ -165,6 +172,7 @@ class DataSource(models.Model):
     life_expectancy = models.IntegerField(choices=LIFE_EXPECTANCY_CHOICES, blank=True, null=True)
     document_completeness = models.CharField(max_length=1, choices=DOCUMENT_COMPLETENESS_CHOICES, blank=True, null=True)
     document_freshness = models.CharField(max_length=1, choices=DOCUMENT_FRESHNESS_CHOICES, blank=True, null=True)
+    schema_type = models.ForeignKey(SchemaType)
     data_source_type = models.ForeignKey(DataSourceType)
     hardware_platform = models.ForeignKey(HardwarePlatform, blank=True, null=True)
     # applications = models.ManyToManyField(Application)

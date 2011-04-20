@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from portfolio.forms import SwitchClientForm
-from portfolio.models import Alias, Application, ApplicationUserGroup, Client, ClientTechnology, Database, DataSource, DataSourceStakeholderGroup, DataSourceType, DataSourceUserGroup, HardwarePlatform, OrganisationalUnit, OperatingSystem, ProgrammingLanguage, StakeholderGroup, StakeholderRole, UserGroup, UserProfile, Vendor
+from portfolio.models import Alias, Application, ApplicationUserGroup, Client, ClientTechnology, Database, DataSource, DataSourceStakeholderGroup, DataSourceType, DataSourceUserGroup, HardwarePlatform, OrganisationalUnit, OperatingSystem, ProgrammingLanguage, SchemaType, StakeholderGroup, StakeholderRole, UserGroup, UserProfile, Vendor
 import logging
 
 logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class DataSourceAdmin(admin.ModelAdmin):
         }),
         ('Technology', {
             'classes': ['collapse closed'],
-            'fields': ['data_source_type', 'hardware_platform'],
+            'fields': ['schema_type', 'data_source_type', 'hardware_platform'],
         }),
         ('Capacity', {
             'classes': ['collapse closed'],
@@ -177,6 +177,7 @@ admin_site.register(HardwarePlatform)
 admin_site.register(OrganisationalUnit, OrganisationalUnitAdmin)
 admin_site.register(OperatingSystem)
 admin_site.register(ProgrammingLanguage)
+admin_site.register(SchemaType)
 admin_site.register(StakeholderGroup, StakeholderGroupAdmin)
 admin_site.register(StakeholderRole, StakeholderRoleAdmin)
 admin_site.register(UserGroup, UserGroupAdmin)

@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import databrowse
-from portfolio.models import Application, ApplicationAlias, ApplicationUserGroup, Client, ClientTechnology, Database, OrganisationalUnit, OperatingSystem, ProgrammingLanguage, UserGroup, UserProfile
+from portfolio.models import Application, DataSource
 from portfolio.admin import admin_site
 import portfolio
 
@@ -20,3 +20,4 @@ urlpatterns = patterns('',
 )
 
 databrowse.site.register(Application)
+databrowse.site.register(DataSource)

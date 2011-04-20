@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from portfolio.forms import SwitchClientForm
-from portfolio.models import Alias, Application, ApplicationUserGroup, Client, ClientTechnology, Database, DataSource, DataSourceStakeholderGroup, DataSourceType, DataSourceUserGroup, HardwarePlatform, OrganisationalUnit, OperatingSystem, ProgrammingLanguage, StakeholderGroup, StakeholderRole, UserGroup, UserProfile, Vendor
+from portfolio.models import Application, ApplicationAlias, ApplicationUserGroup, Client, ClientTechnology, Database, DataSource, DataSourceType, HardwarePlatform, OrganisationalUnit, OperatingSystem, ProgrammingLanguage, StakeholderGroup, UserGroup, UserProfile, Vendor
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class PortfolioAdminSite(admin.AdminSite):
         context.update(extra_context or {})
         return super(PortfolioAdminSite, self).app_index(request, app_label, context)
 
-class AliasAdmin(admin.ModelAdmin):
+class ApplicationAliasAdmin(admin.ModelAdmin):
     exclude = ['client',]
 
     def save_model(self, request, obj, form, change):
@@ -43,7 +43,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         }),
         ('Technology', {
             'classes': ['collapse closed'],
-            'fields': ['client_technologies', 'language', 'os', 'database', 'data_sources'],
+            'fields': ['client_technologies', 'language', 'os', 'database'],
         }),
         ('Issues and Change', {
             'classes': ['collapse closed'],
@@ -55,7 +55,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ['pub_date']
     search_fields = ['name']
     date_hierarchy = 'pub_date'
-    filter_horizontal = ['organisational_units', 'client_technologies', 'data_sources']
+    filter_horizontal = ['organisational_units', 'client_technologies']
 
     def save_model(self, request, obj, form, change):
         obj.client = request.user.get_profile().client
@@ -64,16 +64,6 @@ class ApplicationAdmin(admin.ModelAdmin):
     def queryset(self, request):
         qs = self.model._default_manager.filter(client=request.user.get_profile().client)
         return qs
-
-class DataSourceStakeholderGroupInline(admin.TabularInline):
-    model = DataSourceStakeholderGroup
-    extra = 1
-    classes = ('collapse closed',)
-
-class DataSourceUserGroupInline(admin.TabularInline):
-    model = DataSourceUserGroup
-    extra = 1
-    classes = ('collapse closed',)
 
 class DataSourceAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -92,17 +82,11 @@ class DataSourceAdmin(admin.ModelAdmin):
             'classes': ['collapse closed'],
             'fields': ['data_volume', 'maximum_capacity', 'annual_data_volume_growth'],
         }),
-        ('Issues and Change', {
-            'classes': ['collapse closed'],
-            'fields': ['known_issues', 'pending_changes'],
-        }),
     ]
-    inlines = (DataSourceUserGroupInline, DataSourceStakeholderGroupInline,)
     list_display = ('name', 'pub_date', 'was_published_today')
     list_filter = ['pub_date']
     search_fields = ['name']
     date_hierarchy = 'pub_date'
-    # filter_horizontal = ['applications']
 
     def save_model(self, request, obj, form, change):
         obj.client = request.user.get_profile().client
@@ -134,17 +118,6 @@ class StakeholderGroupAdmin(admin.ModelAdmin):
         qs = self.model._default_manager.filter(client=request.user.get_profile().client)
         return qs
 
-class StakeholderRoleAdmin(admin.ModelAdmin):
-    exclude = ['client',]
-
-    def save_model(self, request, obj, form, change):
-        obj.client = request.user.get_profile().client
-        obj.save()
-
-    def queryset(self, request):
-        qs = self.model._default_manager.filter(client=request.user.get_profile().client)
-        return qs
-
 class UserGroupAdmin(admin.ModelAdmin):
     inlines = (ApplicationUserGroupInline,)
 
@@ -166,8 +139,8 @@ class CustomUserAdmin(UserAdmin):
     inlines = [UserProfileInline,]
 
 admin_site = PortfolioAdminSite()
-admin_site.register(Alias, AliasAdmin)
 admin_site.register(Application, ApplicationAdmin)
+admin_site.register(ApplicationAlias, ApplicationAliasAdmin)
 admin_site.register(Client)
 admin_site.register(ClientTechnology)
 admin_site.register(Database)
@@ -178,7 +151,6 @@ admin_site.register(OrganisationalUnit, OrganisationalUnitAdmin)
 admin_site.register(OperatingSystem)
 admin_site.register(ProgrammingLanguage)
 admin_site.register(StakeholderGroup, StakeholderGroupAdmin)
-admin_site.register(StakeholderRole, StakeholderRoleAdmin)
 admin_site.register(UserGroup, UserGroupAdmin)
 # admin_site.unregister(User)
 admin_site.register(User, CustomUserAdmin)

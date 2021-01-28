@@ -1,0 +1,13 @@
+kind: Project
+name: ${local.env.REPO_NAME}
+defaultEnvironment: "remote"
+environments:
+  - name: remote
+providers:
+  - name: kubernetes
+    environments: [remote]
+    context: gke_apt-phenomenon-243802_us-central1-b_devsheds
+    namespace: ${local.env.REPO_NAME}
+    defaultHostname: ${local.env.REPO_NAME}.devsheds.io
+    buildMode: cluster-docker
+    setupIngressController: nginx
